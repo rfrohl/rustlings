@@ -10,7 +10,7 @@ struct Person {
     age: usize,
 }
 
-// I AM NOT DONE
+// I AM DONE
 
 // Steps:
 // 1. If the length of the provided string is 0 an error should be returned
@@ -22,9 +22,30 @@ struct Person {
 // 5. If while extracting the name and the age something goes wrong an error should be returned
 // If everything goes well, then return a Result of a Person object
 
+use std::num::ParseIntError;
+
 impl FromStr for Person {
     type Err = String;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        if s.len() == 0 {
+            Err("empty string".to_string())
+        } else {
+            let parts: Vec<&str> = s.split(',').collect();
+            if parts.len() != 2 {
+                Err("wrong string format".to_string())
+            } else {
+                let name_s: String = String::from(parts[0]);
+                if name_s.len() == 0 {
+                    return Err("no name".to_string());
+                }
+                let age_n: Result<usize, ParseIntError> = parts[1].parse::<usize>();
+                if let Result::Ok(usize) = age_n {
+                    Ok(Person{ name: name_s, age: age_n.unwrap() })
+                } else {
+                    Err("no age".to_string())
+                }
+            }
+        }
     }
 }
 
